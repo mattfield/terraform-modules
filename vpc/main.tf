@@ -16,7 +16,7 @@ resource "aws_subnet" "private" {
   availability_zone = "${element(split(",", var.vpc_azs), count.index)}"
   count = "${length(compact(split(",", var.vpc_private_subnets)))}"
   tags {
-    Name = "${var.vpc_name}.${element(split(",", var.vpc_azs))}.private"
+    Name = "${var.vpc_name}.${count.index}.private"
   }
 }
 
@@ -26,7 +26,7 @@ resource "aws_subnet" "public" {
   availability_zone = "${element(split(",", var.vpc_azs), count.index)}"
   count = "${length(compact(split(",", var.vpc_public_subnets)))}"
   tags {
-    Name = "${var.vpc_name}.${element(split(",", var.vpc_azs))}.public"
+    Name = "${var.vpc_name}.${count.index}.public"
   }
   map_public_ip_on_launch = true
 }
