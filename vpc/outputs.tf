@@ -10,10 +10,10 @@ output "private_subnet_ids" {
   value = "${join(",", aws_subnet.private.*.id)}"
 }
 
-output "public_route_tabs_ids" {
+output "public_route_table_ids" {
   value = "${join(",", aws_route_table.public.*.id)}"
 }
 
-output "private_route_tabs_ids" {
+output "private_route_table_ids" {
   value = "${join(",", aws_route_table.private.*.id)}"
 }
