@@ -9,3 +9,7 @@ output "public_subnets" {
 output "private_subnets" {
   value = "${join(",", aws_subnet.private.*.id)}"
 }
+
+output "nat_eips" {
+  value = "${join(",", aws_eip.nat.*.public_ip)}"
+}

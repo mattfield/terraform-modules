@@ -14,3 +14,7 @@ variable "vpc_public_subnets" {
 }
 
 variable "vpc_azs" {}
+variable "vpc_nat_gateways_count" {
+  description = "Number of desired NAT gateways. Defaults to 0."
+  default = 0
+}

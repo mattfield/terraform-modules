@@ -16,7 +16,7 @@ resource "aws_subnet" "private" {
   availability_zone = "${element(split(",", var.vpc_azs), count.index)}"
   count = "${length(compact(split(",", var.vpc_private_subnets)))}"
   tags {
-    Name = "${var.vpc_name}-private"
+    Name = "${var.vpc_name}.${element(split(",", var.vpc_azs))}.private"
   }
 }
 
@@ -26,7 +26,7 @@ resource "aws_subnet" "public" {
   availability_zone = "${element(split(",", var.vpc_azs), count.index)}"
   count = "${length(compact(split(",", var.vpc_public_subnets)))}"
   tags {
-    Name = "${var.vpc_name}-public"
+    Name = "${var.vpc_name}.${element(split(",", var.vpc_azs))}.public"
   }
   map_public_ip_on_launch = true
 }
@@ -50,19 +50,43 @@ resource "aws_internet_gateway" "main" {
 
 resource "aws_route_table" "private" {
   vpc_id = "${aws_vpc.main.id}"
+  count = "${length(split(",", var.vpc_private_subnets))}"
   tags {
-    Name = "${var.vpc_name}-private"
+    Name = "${var.vpc_name}.${element(split(",", var.azs))}.private"
   }
 }
 
 resource "aws_route_table_association" "public" {
-  count = "${length(compact(split(",", var.vpc_public_subnets)))}"
-  subnet_id = "${element(aws_subnet.public.*.id, count.index)}"
   route_table_id = "${aws_route_table.public.id}"
+  subnet_id = "${element(aws_subnet.public.*.id, count.index)}"
+  count = "${length(compact(split(",", var.vpc_public_subnets)))}"
 }
 
 resource "aws_route_table_association" "private" {
-  count = "${length(compact(split(",", var.vpc_private_subnets)))}"
+  route_table_id = "${element(aws_route_table.private.*.id, count.index)}"
   subnet_id = "${element(aws_subnet.private.*.id, count.index)}"
-  route_table_id = "${aws_route_table.private.id}"
+  count = "${length(compact(split(",", var.vpc_private_subnets)))}"
+}
+
+resource "aws_eip" "nat" {
+  vpc = true
+  count = "${var.vpc_nat_gateways_count}"
+}
+
+resource "aws_nat_gateway" "nat" {
+  allocation_id = "${element(aws_eip.nat.*.id, count.index)}"
+  subnet_id = "${element(split(",", module.vpc.public_subnets), count.index)}"
+
+  count = "${var.vpc_nat_gateways_count}"
+
+  depends_on = ["aws_internet_gateway.main"]
+}
+
+resource "aws_route" "nat_gateway" {
+  route_table_id = "${element(aws_route_table.private.*.id, count.index)}"
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id = "${element(aws_nat_gateway.nat.*.id, count.index)}"
+  count = "${length(split(",", var.vpc_public_subnets))}"
+
+  depends_on = ["aws_route_table.private"]
 }
