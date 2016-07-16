@@ -5,13 +5,13 @@ provider "aws" {
 
 resource "aws_eip" "nat" {
   vpc = true
-  count = "${var.nat_gateways_count}"
+  count = "${length(split(",", var.nat_public_subnet_ids))}"
 }
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = "${element(aws_eip.nat.*.id, count.index)}"
   subnet_id = "${element(split(",", var.nat_public_subnet_ids), count.index)}"
-  count = "${var.nat_gateways_count}"
+  count = "${length(split(",", var.nat_public_subnet_ids))}"
 
   depends_on = ["${var.nat_internet_gateway}"]
 }
