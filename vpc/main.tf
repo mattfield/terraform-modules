@@ -52,7 +52,7 @@ resource "aws_route_table" "private" {
   vpc_id = "${aws_vpc.main.id}"
   count = "${length(split(",", var.vpc_private_subnets))}"
   tags {
-    Name = "${var.vpc_name}.${element(split(",", var.vpc_azs))}.private"
+    Name = "${var.vpc_name}.${count.index}.private"
   }
 }
 
