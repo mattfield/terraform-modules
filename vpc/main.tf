@@ -16,7 +16,7 @@ resource "aws_subnet" "private" {
   availability_zone = "${element(split(",", var.vpc_azs), count.index)}"
   count = "${length(compact(split(",", var.vpc_private_subnets)))}"
   tags {
-    Name = "${var.vpc_name}-private"
+    Name = "${var.vpc_name}-private-${count.index + 1}"
   }
 }
 
