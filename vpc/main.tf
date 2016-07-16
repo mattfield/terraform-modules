@@ -16,7 +16,7 @@ resource "aws_subnet" "private" {
   availability_zone = "${element(split(",", var.vpc_azs), count.index)}"
   count = "${length(compact(split(",", var.vpc_private_subnets)))}"
   tags {
-    Name = "${var.vpc_name}-private"
+    Name = "${var.vpc_name}-private-${count.index + 1}"
   }
 }
 
@@ -50,8 +50,9 @@ resource "aws_internet_gateway" "main" {
 
 resource "aws_route_table" "private" {
   vpc_id = "${aws_vpc.main.id}"
+  count = "${length(split(",", var.vpc_private_subnets))}"
   tags {
-    Name = "${var.vpc_name}-private"
+    Name = "${var.vpc_name}-private-${count.index + 1}"
   }
 }
 
@@ -64,5 +65,5 @@ resource "aws_route_table_association" "public" {
 resource "aws_route_table_association" "private" {
   count = "${length(compact(split(",", var.vpc_private_subnets)))}"
   subnet_id = "${element(aws_subnet.private.*.id, count.index)}"
-  route_table_id = "${aws_route_table.private.id}"
+  route_table_id = "${element(aws_route_table.private.*.id, count.index)}"
 }
