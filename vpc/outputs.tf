@@ -7,5 +7,5 @@ output "public_subnets" {
 }
 
 output "private_subnets" {
-  value = "${join(',', aws_subnet.private.*.id}"
+  value = "${join(',', aws_subnet.private.*.id)}"
 }
