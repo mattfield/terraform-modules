@@ -88,5 +88,5 @@ resource "aws_route" "nat_gateway" {
   nat_gateway_id = "${element(aws_nat_gateway.nat.*.id, count.index)}"
   count = "${length(split(",", var.vpc_public_subnets))}"
 
-  depends_on = ["aws_route_table.private"]
+  depends_on = ["aws_nat_gateway.private"]
 }
