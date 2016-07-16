@@ -4,7 +4,7 @@ Terraform VPC module
 Terraform module that creates a new VPC in AWS, including:
 
 * Private and public subnets
-* Private and public route tables
+* One public route table, and one route table for each private subnet
 * Internet gateway
 
 Input variables
@@ -38,5 +38,5 @@ Outputs
 =======
 
 * `vpc_id` - VPC ID
-* `public_subnets` - Comma-separated list of public subnet IDs
-* `private_subnets` - Comma-separated list of private subnet IDs
+* `public_subnet_ids` - Comma-separated list of public subnet IDs
+* `private_subnet_ids` - Comma-separated list of private subnet IDs
