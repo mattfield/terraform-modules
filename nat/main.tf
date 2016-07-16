@@ -4,7 +4,7 @@ provider "aws" {
 
 resource "aws_eip" "nat" {
   vpc = true
-  count = "${length(split(",", var.nat_gateway_count))}"
+  count = "${var.nat_gateway_count}"
 }
 
 resource "aws_nat_gateway" "nat" {
