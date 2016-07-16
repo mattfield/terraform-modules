@@ -52,7 +52,7 @@ resource "aws_route_table" "private" {
   vpc_id = "${aws_vpc.main.id}"
   count = "${length(split(",", var.vpc_private_subnets))}"
   tags {
-    Name = "${var.vpc_name}.${element(split(",", var.azs))}.private"
+    Name = "${var.vpc_name}.${element(split(",", var.vpc_azs))}.private"
   }
 }
 
@@ -75,7 +75,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = "${element(aws_eip.nat.*.id, count.index)}"
-  subnet_id = "${element(split(",", module.vpc.public_subnets), count.index)}"
+  subnet_id = "${element(split(",", aws_subnet.public.*.id), count.index)}"
 
   count = "${var.vpc_nat_gateways_count}"
 
