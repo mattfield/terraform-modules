@@ -40,3 +40,5 @@ Outputs
 * `vpc_id` - VPC ID
 * `public_subnet_ids` - Comma-separated list of public subnet IDs
 * `private_subnet_ids` - Comma-separated list of private subnet IDs
+* `public_route_table_ids` - Comma-separated list of public route table IDs
+* `private_route_table_ids` - Comma-separated list of private route table IDs
